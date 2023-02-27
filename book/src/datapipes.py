@@ -1,3 +1,16 @@
+import os
+import torch
+import intake
+import regionmask
+import xbatcher
+import xarray as xr
+import numpy as np
+import zen3geo
+
+from functools import partial
+from torch.utils.data import DataLoader
+from torchdata.datapipes.iter import IterDataPipe
+
 def merge_data():
     era5_daily_cat = intake.open_esm_datastore(
         'https://cpdataeuwest.blob.core.windows.net/cp-cmip/training/ERA5-daily-azure.json'
@@ -18,40 +31,47 @@ def merge_data():
     met_ds['mask'] = np.logical_and(~np.isnan(met_ds['elevation']), met_ds['mask']>0 ).astype(int)
     return met_ds
 
-#@functional_datapipe("subset_regions")
+
+def select_region(ds, region): 
+    # Get all regions & create mask from lat/lons
+    regions = regionmask.defined_regions.ar6.land
+    region_id_mask = regions.mask(ds['lon'], ds['lat'])
+    # Get unique listing of region names & abbreviations
+    reg = np.unique(region_id_mask.values)
+    reg = reg[~np.isnan(reg)]
+    region_abbrevs = np.array(regions[reg].abbrevs)
+    region_names = np.array(regions[reg].names)
+    # Create a mask that only contains the region of interest
+    selection_mask = 0.0 * region_id_mask.copy()
+    region_idx = np.argwhere(region_abbrevs == region)[0][0]
+    region_mask = (region_id_mask == reg[region_idx]).astype(int)
+    return ds.where(region_mask, drop=True)
+
+
 class RegionalSubsetterPipe(IterDataPipe):
         
-    def __init__(self, ds, selected_regions, repeat_region=10, preload=True):
-        self.current_region = None
+    def __init__(self, ds, selected_regions=None, preload=False):
+        super().__init__()
         self.ds = ds
-        self.repeat_region = repeat_region
-        self.selected_regions = [s for s in selected_regions 
-                                 for _ in range(self.repeat_region)]
+        self.selected_regions = self.to_sequence(selected_regions)
         self.preload = preload
         
-    def select_region(self, region): 
-        regions = regionmask.defined_regions.ar6.land
-        region_id_mask = regions.mask(ds['lon'], ds['lat'])
-        reg = np.unique(region_id_mask.values)
-        reg = reg[~np.isnan(reg)]
-        region_abbrevs = np.array(regions[reg].abbrevs)
-        region_names = np.array(regions[reg].names)
-        
-        selection_mask = 0.0 * region_id_mask.copy()
-        region_idx = np.argwhere(region_abbrevs == region)[0][0]
-        region_mask = (region_id_mask == region_idx).astype(int)
-        return self.ds.where(region_mask, drop=True)
+    def to_sequence(self, seq):
+        if isinstance(seq, str):
+            return (seq, )
+        return seq
 
     def __iter__(self):
-        for region in self.selected_regions:
-            if region != self.current_region:
-                self.selected_ds = self.select_region(region)
+        if not self.selected_regions:
+            yield self.ds
+        else:
+            for region in self.selected_regions:
+                self.selected_ds = select_region(self.ds, region)
                 if self.preload:
                     self.selected_ds = self.selected_ds.load()
-            self.current_region = region
-            yield self.selected_ds
-
-
+                yield self.selected_ds
+            
+            
 def filter_batch(batch):
     return batch.where(batch['mask']>0, drop=True)
 
@@ -85,7 +105,6 @@ def stack_split_convert(
     out_vars, 
     in_selectors={},
     out_selectors={},
-    device=None,
     min_samples=200
 ):
     if len(batch['sample']) > min_samples:
@@ -99,9 +118,48 @@ def stack_split_convert(
                   .isel(**out_selectors))
         x = torch.tensor(x.values).float()
         y = torch.tensor(y.values).float()
-        if device:
-            x = x.to(device)
-            y = y.to(device)
     else:
         x, y = torch.tensor([]), torch.tensor([])
     return x, y
+
+
+def make_data_pipeline(
+    ds, 
+    regions, 
+    input_vars, 
+    output_vars,
+    input_sequence_length,
+    output_sequence_length,
+    batch_dims,
+    input_overlap,
+    preload=False,
+    min_samples=200,
+    filter_mask=True,
+    **kwargs
+):
+    # Preamble: just set some stuff up
+    output_selector = {'time': slice(-output_sequence_length, None)}
+    input_dims={'time': input_sequence_length}
+    varlist = ['mask'] + input_vars + output_vars
+    convert = partial(
+        stack_split_convert, 
+        in_vars=input_vars, 
+        out_vars=output_vars, 
+        out_selectors=output_selector,
+        min_samples=min_samples,
+    )
+    # Chain together the datapipe
+    dp = RegionalSubsetterPipe(
+        ds[varlist], selected_regions=regions, preload=preload
+    )
+    dp = dp.slice_with_xbatcher(
+        input_dims=input_dims,
+        batch_dims=batch_dims,
+        input_overlap=input_overlap,
+        preload_batch=False
+    )
+    if filter_mask:
+        dp = dp.map(filter_batch)
+    dp = dp.map(transform_batch)
+    dp = dp.map(convert)   
+    return dp
