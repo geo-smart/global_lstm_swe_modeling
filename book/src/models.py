@@ -34,6 +34,6 @@ def create_lstm_model(
         ),
         LSTMOutput(output_sequence_length),
         nn.Linear(in_features=hidden_size, out_features=output_size),
-        nn.LeakyReLU()
+        nn.LeakyReLU(),
     )
     return model

@@ -11,6 +11,41 @@ from functools import partial
 from torch.utils.data import DataLoader
 from torchdata.datapipes.iter import IterDataPipe
 
+scale_means = xr.Dataset()
+scale_means['mask'] = 0.0
+scale_means['swe'] = 0.1
+scale_means['pr'] = 0.00
+scale_means['tasmax'] = 285.0
+scale_means['tasmin'] = 280.0
+scale_means['elevation'] = 630.0
+scale_means['aspect_cosine'] = 0.0
+
+scale_stds = xr.Dataset()
+scale_stds['mask'] = 1.0
+scale_stds['swe'] = 2.0
+scale_stds['pr'] = 1/1000.0
+scale_stds['tasmax'] = 50.0
+scale_stds['tasmin'] = 50.0
+scale_stds['elevation'] = 830.0
+scale_stds['aspect_cosine'] = 1.0
+
+
+def get_static_data():
+    base_url = 'https://esiptutorial.blob.core.windows.net/eraswe'
+    mask = xr.open_dataset(
+        f'{base_url}/mask_10k_household.zarr',  engine='zarr'
+    )
+    terrain = xr.open_dataset(
+        f'{base_url}/processed_slope_aspect_elevation.zarr', engine='zarr'
+    )
+    terrain['mask'] = mask['sd'].rename({'latitude': 'lat', 'longitude': 'lon'})
+    terrain['mask'] = np.logical_and(
+        ~np.isnan(terrain['elevation']), 
+        terrain['mask']>0 
+    ).astype(int)   
+    return terrain
+
+
 def merge_data():
     era5_daily_cat = intake.open_esm_datastore(
         'https://cpdataeuwest.blob.core.windows.net/cp-cmip/training/ERA5-daily-azure.json'
@@ -24,9 +59,8 @@ def merge_data():
     met_ds = xr.open_mfdataset(met_files,  engine='zarr')#.sel(time=swe_data['time'])
     met_ds = met_ds.sel(time=slice(daily_swe['time'].min(), daily_swe['time'].max()))
     met_ds['swe'] = daily_swe['sd']
-    mask = xr.open_dataset('https://esiptutorial.blob.core.windows.net/eraswe/mask_10k_household.zarr', engine='zarr')
-    terrain = xr.open_dataset('https://esiptutorial.blob.core.windows.net/eraswe/processed_slope_aspect_elevation.zarr', engine='zarr')
-    met_ds['mask'] = mask['sd'].rename({'latitude': 'lat', 'longitude': 'lon'})
+    
+    terrain = get_static_data()
     met_ds = xr.merge([met_ds, terrain])
     met_ds['mask'] = np.logical_and(~np.isnan(met_ds['elevation']), met_ds['mask']>0 ).astype(int)
     return met_ds
@@ -76,26 +110,21 @@ def filter_batch(batch):
     return batch.where(batch['mask']>0, drop=True)
 
 
-def transform_batch(batch):
-    scale_means = xr.Dataset()
-    scale_means['mask'] = 0.0
-    scale_means['swe'] = 0.0
-    scale_means['pr'] = 0.00
-    scale_means['tasmax'] = 295.0
-    scale_means['tasmin'] = 280.0
-    scale_means['elevation'] = 630.0
-    scale_means['aspect_cosine'] = 0.0
-    
-    scale_stds = xr.Dataset()
-    scale_stds['mask'] = 1.0
-    scale_stds['swe'] = 3.0
-    scale_stds['pr'] = 1/100.0
-    scale_stds['tasmax'] = 80.0
-    scale_stds['tasmin'] = 80.0
-    scale_stds['elevation'] = 830.0
-    scale_stds['aspect_cosine'] = 1.0
-    
+def transform_batch(
+    batch, 
+    scale_means=scale_means, 
+    scale_stds=scale_stds
+):
     batch = (batch - scale_means) / scale_stds
+    return batch
+
+
+def untransform_batch(
+    batch, 
+    scale_means=scale_means, 
+    scale_stds=scale_stds
+):
+    batch = (batch * scale_stds) + scale_means
     return batch
 
 
@@ -105,7 +134,8 @@ def stack_split_convert(
     out_vars, 
     in_selectors={},
     out_selectors={},
-    min_samples=200
+    min_samples=50,
+    dtype=torch.float32
 ):
     if len(batch['sample']) > min_samples:
         x = (batch[in_vars]
@@ -116,10 +146,10 @@ def stack_split_convert(
                   .to_array()
                   .transpose('sample', 'time', 'variable')
                   .isel(**out_selectors))
-        x = torch.tensor(x.values).float()
-        y = torch.tensor(y.values).float()
+        x = torch.tensor(x.values).to(dtype)
+        y = torch.tensor(y.values).to(dtype)
     else:
-        x, y = torch.tensor([]), torch.tensor([])
+        x, y = torch.tensor([], dtype=dtype), torch.tensor([], dtype=dtype)
     return x, y
 
 
@@ -133,8 +163,9 @@ def make_data_pipeline(
     batch_dims,
     input_overlap,
     preload=False,
-    min_samples=200,
+    min_samples=50,
     filter_mask=True,
+    dtype=torch.float32,
     **kwargs
 ):
     # Preamble: just set some stuff up
@@ -147,6 +178,7 @@ def make_data_pipeline(
         out_vars=output_vars, 
         out_selectors=output_selector,
         min_samples=min_samples,
+        dtype=dtype,
     )
     # Chain together the datapipe
     dp = RegionalSubsetterPipe(
