@@ -13,19 +13,23 @@ from torchdata.datapipes.iter import IterDataPipe
 
 scale_means = xr.Dataset()
 scale_means['mask'] = 0.0
-scale_means['swe'] = 0.1
+scale_means['swe'] = 0.0
+scale_means['cbrt_swe'] = 0.00
 scale_means['pr'] = 0.00
-scale_means['tasmax'] = 285.0
+scale_means['cbrt_pr'] = 0.00
+scale_means['tasmax'] = 295.0
 scale_means['tasmin'] = 280.0
 scale_means['elevation'] = 630.0
 scale_means['aspect_cosine'] = 0.0
 
 scale_stds = xr.Dataset()
 scale_stds['mask'] = 1.0
-scale_stds['swe'] = 2.0
-scale_stds['pr'] = 1/1000.0
-scale_stds['tasmax'] = 50.0
-scale_stds['tasmin'] = 50.0
+scale_stds['swe'] = 3.0
+scale_stds['cbrt_swe'] = 1/2
+scale_stds['pr'] = 1/100.0
+scale_stds['cbrt_pr'] = 1/10.0
+scale_stds['tasmax'] = 80.0
+scale_stds['tasmin'] = 80.0
 scale_stds['elevation'] = 830.0
 scale_stds['aspect_cosine'] = 1.0
 
@@ -63,6 +67,8 @@ def merge_data():
     terrain = get_static_data()
     met_ds = xr.merge([met_ds, terrain])
     met_ds['mask'] = np.logical_and(~np.isnan(met_ds['elevation']), met_ds['mask']>0 ).astype(int)
+    met_ds['cbrt_swe'] = np.power(met_ds['swe'], 1/3)
+    met_ds['cbrt_pr'] = np.power(met_ds['pr'], 1/3)
     return met_ds
 
 
