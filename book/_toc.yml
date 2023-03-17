@@ -31,8 +31,3 @@ parts:
 - caption: Chapter Four
   chapters:
     - file: 4_application_on_climate_projections
-
-- caption: Reference
-  chapters:
-    - file: reference/glossary
-    - file: reference/bibliography
