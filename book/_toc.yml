@@ -12,57 +12,25 @@ parts:
     - title: About Use Case Library
       file: chapters/about
 
+- caption: Primer
+  chapters:
+    - file: 0_getting_started
+
 - caption: Chapter One
   chapters:
-    - file: chapters/motivation
+    - file: 1_background_and_data
 
 - caption: Chapter Two
   chapters:
-    - file: chapters/methods
+    - file: 2_model_training
 
 - caption: Chapter Three
   chapters:
-    - file: chapters/data
+    - file: 3_application_on_testing_data
 
 - caption: Chapter Four
   chapters:
-    - file: chapters/development
-
-- caption: Chapter Five
-  chapters:
-    - file: chapters/training
-
-- caption: Chapter Six
-  chapters:
-    - file: chapters/evaluation
-
-- caption: Chapter Seven
-  chapters:
-    - file: chapters/workflow
-
-- caption: Chapter Eight
-  chapters:
-    - file: chapters/reproducibility
-
-- caption: Chapter Nine
-  chapters:
-    - file: chapters/conclusion
-
-- caption: Chapter Ten (optional)
-  chapters:
-    - file: chapters/todo
-
-- caption: Chapter Eleven (optional)
-  chapters:
-    - file: chapters/questions
-
-- caption: Chapter Twelve (optional)
-  chapters:
-    - file: chapters/troubleshooting
-
-- caption: Chapter Thirteen
-  chapters:
-    - file: chapters/example
+    - file: 4_application_on_climate_projections
 
 - caption: Reference
   chapters:

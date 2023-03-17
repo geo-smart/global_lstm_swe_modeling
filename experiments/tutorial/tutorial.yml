@@ -1,0 +1,34 @@
+data_config:
+  batch_dims:
+    lat: 30
+    lon: 30
+  input_overlap:
+    time: 330
+  input_sequence_length: 360
+  input_vars:
+  - cbrt_pr
+  - tasmax
+  - tasmin
+  - elevation
+  - aspect_cosine
+  output_sequence_length: 30
+  output_vars:
+  - cbrt_swe
+  regions: WNA
+  test_period: !!python/tuple
+  - '2008'
+  - '2015'
+  train_period: !!python/tuple
+  - '1985'
+  - '2000'
+  valid_period: !!python/tuple
+  - '2001'
+  - '2007'
+model_config:
+  dropout: 0.0
+  hidden_size: 128
+  input_size: 5
+  num_layers: 1
+  output_sequence_length: 30
+  output_size: 1
+weights_file: ../experiments/tutorial/tutorial.pt
