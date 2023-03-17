@@ -1,0 +1,976 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Tutorial 2: Implementing the model and training pipeline &#8212; Use Case Template</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d" />
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '2_model_training';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Tutorial 3: Evaluating the trained model on the test data" href="3_application_on_testing_data.html" />
+    <link rel="prev" title="Tutorial 1: Background and data preparation" href="1_background_and_data.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="0_getting_started.html">
+  
+  
+  
+  
+  
+    <p class="title logo__title">Use Case Template</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference external" href="https://geo-smart.github.io/index.html">Geosmart Website</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://foundations.projectpythia.org/landing-page.html">Project Pythia Foundations</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Chapter One</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="1_background_and_data.html">Tutorial 1: Background and data preparation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Chapter Two</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Tutorial 2: Implementing the model and training pipeline</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Chapter Three</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="3_application_on_testing_data.html">Tutorial 3: Evaluating the trained model on the test data</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Chapter Four</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="4_application_on_climate_projections.html">Tutorial 4: Running the model on downscaled climate projections</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://mybinder.org/v2/gh/geo-smart/use_case_template/main?urlpath=lab/tree/book/2_model_training.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onBinder"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="btn__text-container">Binder</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/geo-smart/use_case_template" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/geo-smart/use_case_template/edit/main/book/2_model_training.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/geo-smart/use_case_template/issues/new?title=Issue%20on%20page%20%2F2_model_training.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/2_model_training.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Tutorial 2: Implementing the model and training pipeline</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outline">Outline</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-and-configuration">Setup and configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-the-data-pipeline">Creating the data pipeline</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#developing-the-model-structure">Developing the model structure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#some-quick-model-data-verification">Some quick model/data verification</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up-the-training-procedure">Setting up the training procedure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#time-for-model-training">Time for model training</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-very-light-introduction-to-mlops">A very light introduction to MLOps</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="tutorial-2-implementing-the-model-and-training-pipeline">
+<h1>Tutorial 2: Implementing the model and training pipeline<a class="headerlink" href="#tutorial-2-implementing-the-model-and-training-pipeline" title="Permalink to this heading">#</a></h1>
+<section id="outline">
+<h2>Outline<a class="headerlink" href="#outline" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Imports, including the library code from previous step</p></li>
+<li><p>Description of LSTM-based models</p></li>
+<li><p>Defining the training loop and procedure</p></li>
+<li><p>Setting hyperparameters and region of interest</p></li>
+<li><p>Running the model training</p></li>
+<li><p>Recording model configuration and saving the trained model</p></li>
+<li><p>Putting the model architecture code into a library module</p></li>
+</ul>
+</section>
+<section id="setup-and-configuration">
+<h2>Setup and configuration<a class="headerlink" href="#setup-and-configuration" title="Permalink to this heading">#</a></h2>
+<p>Before we get to the core of the tutorial, actually building and training a neural network, we need to do all of the normal setup. This includes a standard set of imports, but also includes our first import from the local codebase which is in the <code class="docutils literal notranslate"><span class="pre">src</span></code> folder. Here we are going to import some functions from the <code class="docutils literal notranslate"><span class="pre">src.datapipes</span></code> module, which contains the key portions of the code from the previous tutorial on actually loading in the data. By offloading this to code in a python module we can make the actual content of this step of the tutorial much clearer. Additionally, this gives us a start of a python package that might be useful to others and could be adapted to be generally importable. Finally, after our imports we set the default <code class="docutils literal notranslate"><span class="pre">DEVICE</span></code> to use a GPU if it is available, and fall back to CPU if not.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">from</span> <span class="nn">tqdm.autonotebook</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="c1"># Code from the last part of the tutorial!!</span>
+<span class="kn">from</span> <span class="nn">src.datapipes</span> <span class="kn">import</span> <span class="n">make_data_pipeline</span><span class="p">,</span> <span class="n">merge_data</span><span class="p">,</span> <span class="n">select_region</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="n">DEVICE</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda:0&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+<span class="n">DTYPE</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float32</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_1035/3029422663.py:9: TqdmExperimentalWarning: Using `tqdm.autonotebook.tqdm` in notebook mode. Use `tqdm.tqdm` instead to force console mode (e.g. in jupyter console)
+  from tqdm.autonotebook import tqdm
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="creating-the-data-pipeline">
+<h2>Creating the data pipeline<a class="headerlink" href="#creating-the-data-pipeline" title="Permalink to this heading">#</a></h2>
+<p>If you followed along with the previous section of the tutorial you know the general pieces of info that go into setting up the data pipeline for our dataset, which culminated in developing the <code class="docutils literal notranslate"><span class="pre">make_data_pipeline</span></code> function. Before fully defining the pipelines, let’s define our train/valid/test split. There are many ways to do this, and it’s one of the most important parts of a rigorous machine learning pipeline. In our case, we’ll just use a temporal split to define this, but our workflow is already set up quite nicely to use different regions for the splitting mechanism. Anyhow, for the tutorial we just set the splits as such:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train_period</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="s1">&#39;1985&#39;</span><span class="p">,</span> <span class="s1">&#39;2000&#39;</span><span class="p">)</span>
+<span class="n">valid_period</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="s1">&#39;2001&#39;</span><span class="p">,</span> <span class="s1">&#39;2007&#39;</span><span class="p">)</span>
+<span class="n">test_period</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="s1">&#39;2008&#39;</span><span class="p">,</span> <span class="s1">&#39;2015&#39;</span><span class="p">)</span>
+
+<span class="n">ds</span> <span class="o">=</span> <span class="n">merge_data</span><span class="p">()</span>
+
+<span class="n">train_ds</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">train_period</span><span class="p">)</span>
+<span class="n">valid_ds</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">valid_period</span><span class="p">)</span>
+<span class="n">test_ds</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">test_period</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Given that, we can set up all of the rest of the pipeline configuration. This includes the region we’re interested in modeling, the input and output variables, and the timescales we’ll model with. Most of this code should be pretty self-explanatory, but it’s probably worth highlighting the <code class="docutils literal notranslate"><span class="pre">input_sequence_length</span></code> and <code class="docutils literal notranslate"><span class="pre">output_sequence_length</span></code> variables. As we will get into, we’ll be training a “recurrent neural network” (RNN), which processes variables sequentially and has the ability to store some “hidden state” which is able to track information coming in from past inputs. The reason that we specify different input/output sequence lengths is because we know that snowpack has a long-term dependence on temperature and precipitation. So, we define a much longer input sequence lenth than output sequence length to capture this long-term dependence. We set the input to be 360 days to be able to account for roughly a full year of input data, and the output to be 30 so that we predict about a month of snowpack dynamics for any given input.  This asymmetry amounts to letting the model “spin up” it’s hidden state for the first 330 days and then start to output for the last 30. These are arbitrary choices in our case, which account for some level of knowledge that we have about snow hydrology, but could be further tuned as “hyperparameters”. As a last note, we set the <code class="docutils literal notranslate"><span class="pre">input_overlap</span></code> to be the difference between the input and output sequence lengths as a way to take advantage of as much as data as possible in the training dataset.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">regions</span> <span class="o">=</span> <span class="s1">&#39;WNA&#39;</span>
+<span class="n">input_vars</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;cbrt_pr&#39;</span><span class="p">,</span>  <span class="s1">&#39;tasmax&#39;</span><span class="p">,</span>  <span class="s1">&#39;tasmin&#39;</span><span class="p">,</span>  <span class="s1">&#39;elevation&#39;</span><span class="p">,</span>  <span class="s1">&#39;aspect_cosine&#39;</span><span class="p">]</span>
+<span class="n">output_vars</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;cbrt_swe&#39;</span><span class="p">]</span>
+<span class="n">input_sequence_length</span> <span class="o">=</span> <span class="mi">360</span>
+<span class="n">output_sequence_length</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="n">batch_dims</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;lat&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">}</span>
+<span class="n">input_overlap</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">input_sequence_length</span> <span class="o">-</span> <span class="n">output_sequence_length</span><span class="p">}</span> 
+</pre></div>
+</div>
+</div>
+</div>
+<p>With everything set up, we can use our handy <code class="docutils literal notranslate"><span class="pre">make_data_pipeline</span></code> function to create the pipes for the training and validation datasets. Note how these make use of all of our metadata/hyperparameters from above in a nicely encapsulated way. This could ideally even be taken to other problems where similar datasets are being used, perhaps for something like soil moisture modeling.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train_pipe</span> <span class="o">=</span> <span class="n">make_data_pipeline</span><span class="p">(</span>
+    <span class="n">train_ds</span><span class="p">,</span> <span class="n">regions</span><span class="p">,</span>
+    <span class="n">input_vars</span><span class="p">,</span> <span class="n">output_vars</span><span class="p">,</span>
+    <span class="n">input_sequence_length</span><span class="p">,</span> <span class="n">output_sequence_length</span><span class="p">,</span>
+    <span class="n">batch_dims</span><span class="p">,</span> <span class="n">input_overlap</span><span class="p">,</span> <span class="n">preload</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">DTYPE</span>
+<span class="p">)</span>
+
+<span class="n">valid_pipe</span> <span class="o">=</span> <span class="n">make_data_pipeline</span><span class="p">(</span>
+    <span class="n">valid_ds</span><span class="p">,</span> <span class="n">regions</span><span class="p">,</span>
+    <span class="n">input_vars</span><span class="p">,</span> <span class="n">output_vars</span><span class="p">,</span>
+    <span class="n">input_sequence_length</span><span class="p">,</span> <span class="n">output_sequence_length</span><span class="p">,</span>
+    <span class="n">batch_dims</span><span class="p">,</span> <span class="n">input_overlap</span><span class="p">,</span> <span class="n">preload</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">DTYPE</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="developing-the-model-structure">
+<h2>Developing the model structure<a class="headerlink" href="#developing-the-model-structure" title="Permalink to this heading">#</a></h2>
+<p>We have finally gotten to the point where we can start developing our model structure. This part is going to be quite concise in terms of the code that we’ll use, but behind such a short amount of code are many years code and mathematical development. We’ll take a brief detour to understand how/why we use the methods we do before moving on.</p>
+<p>The model structure that we’ll use here is the “Long Short Term Memory Network”, commonly referred to simply as an LSTM (<a class="reference external" href="https://doi.org/10.1162/neco.1997.9.8.1735">Hochreiter and Schmidhuber, 1997</a>). The LSTM is a popular variant of a class of neural networks called “recurrent neural networks” (RNN), which essentially process information sequentially. They were developed to address limitations of traditional RNNs when training on long sequences and have been popular in many areas including hydrology. Their use in modeling hydrologic processes has included streamflow (<a class="reference external" href="https://doi.org/10.5194/hess-22-6005-2018">Kratzert et al, 2017</a>), soil moisture (<a class="reference external" href="https://doi.org/10.1038/s41597-021-00964-1">Sungmin and Orth, 2021</a>), and snow (<a class="reference external" href="https://doi.org/10.1029/2021WR031033">Wang et al, 2022</a>), among other applications.</p>
+<p>Before jumping into the code, let’s take a moment to actually see how LSTMs work. We will onlly scratch the surface, but a nice in-depth explanation of how and why LSTMs work see <a class="reference external" href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/">Chris Olah’s blog on “Understanding LSTM Networks”</a>. The basic idea behind an RNN, generally, is that it will take an (unbatched) input with dimensions <code class="docutils literal notranslate"><span class="pre">(sequence_length,</span> <span class="pre">num_features)</span></code>, where <code class="docutils literal notranslate"><span class="pre">sequence_length</span></code> represents inputs that have a particular order (e.g. time) and <code class="docutils literal notranslate"><span class="pre">num_features</span></code> are the number of relevant variables (e.g. temperature, precipitation). Then for every element along the <code class="docutils literal notranslate"><span class="pre">sequence_length</span></code> dimension the following equations are computed:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+i_t = \sigma \left( W_{ii}x_t + b_{ii} + W_{hi}h_{t-1} + b_{hi} \right)  \\
+f_t = \sigma \left( W_{if}x_t + b_{if} + W_{hf}h_{t-1} + b_{hf}  \right) \\
+g_t = \text{tanh} \left( W_{ig}x_t + b_{ig} + W_{hg}h_{t-1} + b_{hg} \right) \\
+o_t = \sigma \left( W_{io}x_t + b_{io} + W_{ho}h_{t-1} + b_{ho} \right) \\
+c_t = f_t \odot c_{t-1} + i_t \odot g_t
+h_t = o_t \odot \text{tanh}(c_t)
+\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(t\)</span> is the timestep index, <span class="math notranslate nohighlight">\(\sigma\)</span> is the sigmoid function, <span class="math notranslate nohighlight">\(\odot\)</span> is the Hadamard (or elementwise) product, <span class="math notranslate nohighlight">\(h_t\)</span> is the hidden state, <span class="math notranslate nohighlight">\(c_t\)</span> is the cell state, <span class="math notranslate nohighlight">\(x_t\)</span> is the input. <span class="math notranslate nohighlight">\(W_{\cdot\cdot}\)</span> represents learnable weight matrices and <span class="math notranslate nohighlight">\(b_{\cdot\cdot}\)</span> represent biases. The gate names are:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(o\)</span>: Output gate</p></li>
+<li><p><span class="math notranslate nohighlight">\(i_t\)</span>: Input gate</p></li>
+<li><p><span class="math notranslate nohighlight">\(f_t\)</span>: forget gate</p></li>
+<li><p><span class="math notranslate nohighlight">\(g_t\)</span>: cell gate</p></li>
+<li><p><span class="math notranslate nohighlight">\(o_t\)</span>: output gate</p></li>
+</ul>
+<p>Diagramattically this can be represented from the popular figure from <a class="reference external" href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/">Chris Olah’s blog on “Understanding LSTM Networks”</a>:</p>
+<div>
+    <img src=https://colah.github.io/posts/2015-08-Understanding-LSTMs/img/LSTM3-chain.png width="800px">
+</div>
+<p>With all of this background understanding in tow, we can start to tackle the practical problem of building our model. For the most part we can rely on off-the-shelf components, but it’s worth seeing how to implement a (very) basic neural network layer in the pytorch framework. To be clear, what follows could be implemented inside of something like the training loop, but <a class="reference external" href="http://karpathy.github.io/2019/04/25/recipe/">training neural networks is a leaky abstraction</a> and as often as possible, it is better to decouple what your model <em>does</em> from how <em>well</em> it does it.</p>
+<p>As we saw, an LSTM network can take an input of dimensions <code class="docutils literal notranslate"><span class="pre">(batch,</span> <span class="pre">timesteps,</span> <span class="pre">features)</span></code> and output <code class="docutils literal notranslate"><span class="pre">(batch,</span> <span class="pre">timesteps,</span> <span class="pre">targets)</span></code>. But, it’s often the case (including here) where the number of input timesteps won’t match the number of target timesteps. From an abstract standpoint this is exactly the same consideration as converting the <em>features</em> dimension to a <em>target</em> dimension. But unlike situations like language translation where the length of an input and output sequence length may be decoupled, we claim that any change in snowpack can only be a result of the meteorologic conditions from today or the past. As such, we further claim that the current snowpack state is only a function of some history of meteorologic states. This is exactly how we’ve set up the data loaders!</p>
+<p>To take advantage of this, and the setup of the standard LSTM module from pytorch we can define the <code class="docutils literal notranslate"><span class="pre">LSTMOutput</span></code> class, which is a neural network “layer”, that simply truncates the output time length to whatever is specified via the <code class="docutils literal notranslate"><span class="pre">out_len</span></code> variable. This is done in standard python fashion by declaring the class and <code class="docutils literal notranslate"><span class="pre">__init__</span></code> consstructor method, as well as standard pytorch fashion by defining the <code class="docutils literal notranslate"><span class="pre">forward</span></code> method which tells pytorch how to handle the forward application, while the backpropagation can be handled via pytorch’s internal machinery.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">LSTMOutput</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_len</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_len</span> <span class="o">=</span> <span class="n">out_len</span>
+        
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
+        <span class="c1"># nn.LSTM returns (output, (hn, cn)), so we just</span>
+        <span class="c1"># want to grab the `output`</span>
+        <span class="c1"># Output shape (batch, sequence_length, hidden)</span>
+        <span class="n">output</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="c1"># Now just grab the last index on the sequence length</span>
+        <span class="c1"># Reshape shape (batch, output_timesteps, hidden)</span>
+        <span class="k">return</span> <span class="n">output</span><span class="p">[:,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">out_len</span><span class="p">:,</span> <span class="p">:]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>With our custom layer set up we can start to build our model that will (hopefully) do something useful! In the act of doing this we will be good scientists and put the full model creation workflow into a function that can take even more hyperparameters into consideration. We’ll set some defaults here just to get things started. Then, in the <code class="docutils literal notranslate"><span class="pre">create_lstm_model</span></code> function we simply create a new overall model structure by chaining together layers, starting with the pytorch implementation of the LSTM, followed by our <code class="docutils literal notranslate"><span class="pre">LSTMOtput</span></code> layer that select on time, followed by a linear layer to project the dimensionality from the <code class="docutils literal notranslate"><span class="pre">hidden_size</span></code> down to the <code class="docutils literal notranslate"><span class="pre">output_size</span></code>, and finally a “LeakyReLU” layer which basically reduces the ability of the model to produce negative snow, but also reduces the the <a class="reference external" href="https://towardsdatascience.com/neural-network-the-dead-neuron-eaa92e575748">dead neuron effect</a>. This is, admittedly, an architectural choice that could be dropped or modified, but does appear to work reasonably well as you will see.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">hidden_size</span> <span class="o">=</span> <span class="mi">128</span>
+<span class="n">num_layers</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">3e-3</span>
+<span class="n">dropout</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">max_epochs</span> <span class="o">=</span> <span class="mi">20</span>
+
+<span class="k">def</span> <span class="nf">create_lstm_model</span><span class="p">(</span>
+    <span class="n">input_size</span><span class="p">,</span> 
+    <span class="n">hidden_size</span><span class="p">,</span> 
+    <span class="n">output_size</span><span class="p">,</span> 
+    <span class="n">output_sequence_length</span><span class="p">,</span>
+    <span class="n">num_layers</span><span class="p">,</span> 
+    <span class="n">dropout</span>
+<span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">LSTM</span><span class="p">(</span>
+            <span class="n">input_size</span><span class="o">=</span><span class="n">input_size</span><span class="p">,</span> 
+            <span class="n">hidden_size</span><span class="o">=</span><span class="n">hidden_size</span><span class="p">,</span> 
+            <span class="n">num_layers</span><span class="o">=</span><span class="n">num_layers</span><span class="p">,</span>
+            <span class="n">dropout</span><span class="o">=</span><span class="n">dropout</span><span class="p">,</span>
+            <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">LSTMOutput</span><span class="p">(</span><span class="n">output_sequence_length</span><span class="p">),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="n">output_size</span><span class="p">),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(),</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">model</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>From this we can easily create new models in a programattic way, which makes hyperparameter tuning and reproducibility much easier. We can use this function right away, given all of our other configuration. But, before we can actually train the model there are a couple other pieces that need to be connected. Namely a loss function and optimizer. These both have many options including those implemented by default via the pytorch library but are generally beyond the scope of this tutorial. We’ll just use the standard <code class="docutils literal notranslate"><span class="pre">Adam</span></code> optimizer (with  learning rate hyperparameter defined above) and mean squared error loss here. The last thing we’ll do is define one last optional piece, the <code class="docutils literal notranslate"><span class="pre">scheduler</span></code>. which tells the optimizer how to set the learning rate throughout the process. Here we will use the <code class="docutils literal notranslate"><span class="pre">OneCycleLR</span></code> scheduler, which basically starts with a very small learning rate and increases it after each epoch until plateauing about a third of the way through and finally slowly decaying back to a small learning rate. This type of learning rate scheduler has been found to decrease the training time to reach a comparable loss compared to models trained without it.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">create_lstm_model</span><span class="p">(</span>
+    <span class="nb">len</span><span class="p">(</span><span class="n">input_vars</span><span class="p">),</span> 
+    <span class="n">hidden_size</span><span class="p">,</span> 
+    <span class="nb">len</span><span class="p">(</span><span class="n">output_vars</span><span class="p">),</span> 
+    <span class="n">output_sequence_length</span><span class="p">,</span> 
+    <span class="n">num_layers</span><span class="p">,</span> 
+    <span class="n">dropout</span>
+<span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DTYPE</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span>
+<span class="n">opt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">learning_rate</span><span class="p">)</span>
+<span class="n">loss_fun</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>  
+<span class="n">scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">OneCycleLR</span><span class="p">(</span>
+    <span class="n">opt</span><span class="p">,</span> <span class="n">max_lr</span><span class="o">=</span><span class="n">learning_rate</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="n">max_epochs</span><span class="p">,</span> <span class="n">steps_per_epoch</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="some-quick-model-data-verification">
+<h2>Some quick model/data verification<a class="headerlink" href="#some-quick-model-data-verification" title="Permalink to this heading">#</a></h2>
+<p>Many tutorials would jump straight into training the model now, but from a practical standpoint, it’s worth making sure that your data inputs/outputs match up in the way that you expect them to before getting too deep. This can largely be a matter of trial and error in the worst case, but if you are careful and understand everything that happens in your model it is merely a formality. Starting here we’ll first see that our input and output batches contain differences along both the <code class="docutils literal notranslate"><span class="pre">timesteps</span></code> and <code class="docutils literal notranslate"><span class="pre">features</span></code> dimensions. This should come as no surprise, but quantifying it should be a good “gut check”. Similarly, we can make sure that the output of our model is the same as the target from the dataloader. If this is not the case something is wrong and you will need to go back in the data/model workflow to debug what’s going on before you can train your model.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">train_pipe</span><span class="p">))</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Dims are: (batch, timesteps, features)&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="s1">&#39;Model targets match output &#39;</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dims are: (batch, timesteps, features)
+torch.Size([232, 360, 5]) torch.Size([232, 30, 1])
+Model targets match output  True
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="setting-up-the-training-procedure">
+<h2>Setting up the training procedure<a class="headerlink" href="#setting-up-the-training-procedure" title="Permalink to this heading">#</a></h2>
+<p>At this point we have confirmed that our model and dataloaders can interoperate, so it’s time to actually figure out how to train the model using our data to produce something useful. To do that we’ll define the <code class="docutils literal notranslate"><span class="pre">train_epoch</span></code> function which takes our model, data loader, optimizer, and loss function as inputs. It will run over the entire dataset and calculate the model outputs, comparing them against the targets using the loss function. If used with the <code class="docutils literal notranslate"><span class="pre">train</span></code> flag set to true we will update the model parameters after every batch is processed via the <code class="docutils literal notranslate"><span class="pre">opt.step()</span></code> function. We also implement some custom behavior if <code class="docutils literal notranslate"><span class="pre">train</span></code> is set to false that will save on computation during the validation steps. Finally, this function will return the average loss over the overall epoch, although you could modify the function to return the full series of losses across training batches.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">train_epoch</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dl</span><span class="p">,</span> <span class="n">opt</span><span class="p">,</span> <span class="n">loss_fun</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">DEVICE</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">DTYPE</span><span class="p">):</span>
+    <span class="n">avg_loss</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">dl</span><span class="p">)):</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">batch</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="k">continue</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span> <span class="n">y</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">train</span><span class="p">:</span>
+            <span class="n">yhat</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Don&#39;t compute gradients</span>
+            <span class="c1"># Saves on computation</span>
+            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                <span class="n">yhat</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_fun</span><span class="p">(</span><span class="n">yhat</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">train</span><span class="p">:</span>
+            <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="n">opt</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+        <span class="n">avg_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">avg_loss</span> <span class="o">/</span> <span class="n">i</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="time-for-model-training">
+<h2>Time for model training<a class="headerlink" href="#time-for-model-training" title="Permalink to this heading">#</a></h2>
+<p>And that’s it, we’re ready to actually run the training procedure! We will initialize some lists for recording the training and validation losses and also set the maximum number of epochs to run the training on. For simplicity, we’ve set this to 20 epochs which runs in approximately 45 minutes when running on the Planetary Computer pytorch environment with a T4 GPU. If you just want to get a baseline model that doesn’t work very well you can lower this number, or alternatively if you have more time to kill you can set this to a higher number and really start to push the limits of this model/data!</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train_loss</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">valid_loss</span> <span class="o">=</span> <span class="p">[]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="p">(</span><span class="n">bar</span> <span class="o">:=</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">max_epochs</span><span class="p">))):</span>
+    <span class="c1"># Make sure to turn on train mode here</span>
+    <span class="c1"># so that we update parameters</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="n">tl</span> <span class="o">=</span> <span class="n">train_epoch</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">train_pipe</span><span class="p">,</span> <span class="n">opt</span><span class="p">,</span> <span class="n">loss_fun</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># Now set to evaluation mode which reduces</span>
+    <span class="c1"># the memory/computational cost</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="n">vl</span> <span class="o">=</span> <span class="n">train_epoch</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">valid_pipe</span><span class="p">,</span> <span class="n">opt</span><span class="p">,</span> <span class="n">loss_fun</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="c1"># Log our losses and update the status bar</span>
+    <span class="n">train_loss</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tl</span><span class="p">),</span> <span class="n">valid_loss</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vl</span><span class="p">)</span>
+    <span class="n">scheduler</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+    <span class="n">bar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Train loss: </span><span class="si">{</span><span class="n">tl</span><span class="si">:</span><span class="s1">0.1e</span><span class="si">}</span><span class="s1">, valid loss: </span><span class="si">{</span><span class="n">vl</span><span class="si">:</span><span class="s1">0.1e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "079a03a9efaa44cab1f12ae598e142f3", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "4c0a6839cc324f14abdca6f16494b2a7", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "6db45fafb49a4c97b3107b5983530e0e", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "fd630f93f7ca4b0a943144308a8a4c59", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "aedc4deb802e4127a347e73bb894459e", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "e60af8295e2f4da1baf7769d644d5365", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "bb6d1c9f03b947758ddbf78bb1447f75", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "385b012be772487a8b6f81c71898cce3", "version_major": 2, "version_minor": 0}</script><div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>IOPub message rate exceeded.
+The Jupyter server will temporarily stop sending output
+to the client in order to avoid crashing it.
+To change this limit, set the config variable
+`--ServerApp.iopub_msg_rate_limit`.
+
+Current values:
+ServerApp.iopub_msg_rate_limit=1000.0 (msgs/sec)
+ServerApp.rate_limit_window=3.0 (secs)
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "e6768bb239f24f7ca8af629b1b717608", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "807c3f8b1ffb4e109ecc20e7a2d3c891", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "d0fc061ea71240a4aa4d8515a8b5d862", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "3cba7b52cd6d4c9f9785ef16cd1a28ee", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "717a8b1f80d14cb381e55deb40e6fc66", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "174ef2ec78e5426fbe268176c577e7d8", "version_major": 2, "version_minor": 0}</script><div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>IOPub message rate exceeded.
+The Jupyter server will temporarily stop sending output
+to the client in order to avoid crashing it.
+To change this limit, set the config variable
+`--ServerApp.iopub_msg_rate_limit`.
+
+Current values:
+ServerApp.iopub_msg_rate_limit=1000.0 (msgs/sec)
+ServerApp.rate_limit_window=3.0 (secs)
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "0823b32ae930431cb8362f351efd07d1", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "050e417148ae4be2977ce550766c4a8c", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "7794d7c98a7b4280b9213408f66b43f8", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "0d240d3e00414fff86aee5d2bcc35317", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "1c8381a041554895a20a902f92bd1ce7", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<p>If you’ve made it this far, you can finally see how the training progressed! We simply plot some loss curves below.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">train_loss</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Train&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">valid_loss</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Valid&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Epoch&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Loss&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;loss.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/5991e171e278ee59071a7e62dd8ed7df2b4746de8d4aab2f9cd6a2363e05132c.png" src="_images/5991e171e278ee59071a7e62dd8ed7df2b4746de8d4aab2f9cd6a2363e05132c.png" />
+</div>
+</div>
+</section>
+<section id="a-very-light-introduction-to-mlops">
+<h2>A very light introduction to MLOps<a class="headerlink" href="#a-very-light-introduction-to-mlops" title="Permalink to this heading">#</a></h2>
+<p>Congratulations! You’ve trained a model. Now what? Before you go ahead and start analyzing the trained model here in this very notebook take a deep breath. We’re going to stop you while you are ahead. Doing model training and evaluation in the same notebook or script is dangerous indeed, and makes it quite easy to end up getting really good false-results which can be chalked up to <a class="reference external" href="https://en.wikipedia.org/wiki/Leakage_(machine_learning)">data leakage</a>. This is an important consideration that we’ll come back to later, particularly because we’ve chosen to train our model on a particular region and then test and apply it to the same region in the following tutorial steps, but it would be even more robust to test/apply the model to regions which weren’t included in the training datset. Anyhow, more on that later.</p>
+<p>For now, we just need a way to record the experimental decisions that we’ve made in this tutorial step with relative completeness. There are many MLOps frameworks which can handle this at scale such as <a class="reference external" href="https://wandb.ai/site">Weights and Biases</a> and <a class="reference external" href="https://mlflow.org/">MLFlow</a>, but they are a bit too complex to cover here. Basically, the idea here is that we want to capture all of the essential pieces of the training workflow that we just did so that we can not only reproduce the trained model, but also so that we can make sure we can take the trained model and use it on new data.</p>
+<p>In the process of this we’ll just develop a simple set of functions which can save and load “experiments” which are really just collections of attributes and hyperparameter values that we’ve set throughout this tutorial. From a high level we splt this into the <code class="docutils literal notranslate"><span class="pre">data_config</span></code> and <code class="docutils literal notranslate"><span class="pre">model_config</span></code> which is simply stored as the dictionary supplied below:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">experiment_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;data_config&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="c1"># Note: using `start`/`stop` attributes so we save a tuple</span>
+        <span class="s2">&quot;train_period&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">train_period</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">train_period</span><span class="o">.</span><span class="n">stop</span><span class="p">),</span>
+        <span class="s2">&quot;valid_period&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">valid_period</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">valid_period</span><span class="o">.</span><span class="n">stop</span><span class="p">),</span>
+        <span class="s2">&quot;test_period&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">test_period</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">test_period</span><span class="o">.</span><span class="n">stop</span><span class="p">),</span>
+        <span class="s2">&quot;regions&quot;</span><span class="p">:</span> <span class="n">regions</span><span class="p">,</span>
+        <span class="s2">&quot;input_vars&quot;</span><span class="p">:</span> <span class="n">input_vars</span><span class="p">,</span>
+        <span class="s2">&quot;output_vars&quot;</span><span class="p">:</span> <span class="n">output_vars</span><span class="p">,</span>
+        <span class="s2">&quot;input_sequence_length&quot;</span><span class="p">:</span> <span class="n">input_sequence_length</span><span class="p">,</span>
+        <span class="s2">&quot;output_sequence_length&quot;</span><span class="p">:</span> <span class="n">output_sequence_length</span><span class="p">,</span>
+        <span class="s2">&quot;batch_dims&quot;</span><span class="p">:</span> <span class="n">batch_dims</span><span class="p">,</span>
+        <span class="s2">&quot;input_overlap&quot;</span><span class="p">:</span> <span class="n">input_overlap</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;model_config&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;input_size&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_vars</span><span class="p">),</span>
+        <span class="s2">&quot;hidden_size&quot;</span><span class="p">:</span> <span class="n">hidden_size</span><span class="p">,</span>
+        <span class="s2">&quot;output_size&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_vars</span><span class="p">),</span>
+        <span class="s2">&quot;output_sequence_length&quot;</span><span class="p">:</span> <span class="n">output_sequence_length</span><span class="p">,</span>
+        <span class="s2">&quot;num_layers&quot;</span><span class="p">:</span> <span class="n">num_layers</span><span class="p">,</span>
+        <span class="s2">&quot;dropout&quot;</span><span class="p">:</span> <span class="n">dropout</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Given that dictionary structure we want to simply write out a file that records all of that info. And similarly, can read that information back in at a later date. For this use case we’ll use the <a class="reference external" href="https://yaml.org/">yaml</a> file format.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">save_experiment</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">outfile</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.yml&quot;</span>
+    <span class="k">if</span> <span class="n">model</span><span class="p">:</span>
+        <span class="c1"># We have a trained model that we should save the weights for</span>
+        <span class="c1"># so we write that as a separate file and then also record </span>
+        <span class="c1"># where we wrote those to via the `weights_file` key</span>
+        <span class="n">config</span><span class="p">[</span><span class="s2">&quot;weights_file&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.pt&quot;</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.pt&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">outfile</span>
+
+
+<span class="k">def</span> <span class="nf">load_experiment</span><span class="p">(</span><span class="n">config_path</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">config</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>With this set of functions defined we can then make use of them. First, we’ll just save an experiment file out, which has the name <code class="docutils literal notranslate"><span class="pre">tutorial</span></code> and also provides our model structure via the <code class="docutils literal notranslate"><span class="pre">model</span></code> keyword. This ensures that the trained model parameters are saved out and can be loaded in, in the next tutorial.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">save_experiment</span><span class="p">(</span>
+    <span class="n">config</span><span class="o">=</span><span class="n">experiment_config</span><span class="p">,</span> 
+    <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;../experiments/tutorial&quot;</span><span class="p">,</span> 
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;tutorial&quot;</span><span class="p">,</span> 
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We demonstrate that things are all good, and nothing has been lost by making sure to test the <code class="docutils literal notranslate"><span class="pre">load_experiment</span></code> function as well as using the <code class="docutils literal notranslate"><span class="pre">create_lstm_model</span></code> which we defined earlier given the <code class="docutils literal notranslate"><span class="pre">model_config</span></code> section of our saved out experiment. We finalize everything by proving that we can not only instantiate the model structure, but also can load back in the exact same saved out model via the <code class="docutils literal notranslate"><span class="pre">weights</span> <span class="pre">file</span></code>. Given all of this we are ready to evaluate the model on our held out test data!</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">experiment_config</span> <span class="o">=</span> <span class="n">load_experiment</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="n">experiment_config</span>
+
+<span class="n">loaded_model</span> <span class="o">=</span> <span class="n">create_lstm_model</span><span class="p">(</span><span class="o">**</span><span class="n">experiment_config</span><span class="p">[</span><span class="s1">&#39;model_config&#39;</span><span class="p">])</span>
+<span class="n">loaded_model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">experiment_config</span><span class="p">[</span><span class="s1">&#39;weights_file&#39;</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;All keys matched successfully&gt;
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "conda-env-notebook-py"
+        },
+        kernelOptions: {
+            name: "conda-env-notebook-py",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'conda-env-notebook-py'</script>
+
+                </article>
+              
+
+              
+              
+                <footer class="bd-footer-article">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="1_background_and_data.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Tutorial 1: Background and data preparation</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="3_application_on_testing_data.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Tutorial 3: Evaluating the trained model on the test data</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outline">Outline</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-and-configuration">Setup and configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-the-data-pipeline">Creating the data pipeline</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#developing-the-model-structure">Developing the model structure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#some-quick-model-data-verification">Some quick model/data verification</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up-the-training-procedure">Setting up the training procedure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#time-for-model-training">Time for model training</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-very-light-introduction-to-mlops">A very light introduction to MLOps</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            <div class="bd-footer-content__inner">
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By eScience Institute, University of Washington
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div></div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

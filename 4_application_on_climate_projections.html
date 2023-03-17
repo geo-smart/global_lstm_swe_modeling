@@ -1,0 +1,970 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Tutorial 4: Running the model on downscaled climate projections &#8212; Use Case Template</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d" />
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script type="application/vnd.jupyter.widget-state+json">{"state": {"0ae56284fbe84ec5907213362784d3d0": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "FloatProgressModel", "state": {"bar_style": "success", "layout": "IPY_MODEL_fbac0935d0884d1789226708598aa44b", "max": 1, "style": "IPY_MODEL_cfcf576daa3a4d2f85547a0f96b8a146", "value": 1}}, "0d0af4a01c6b4a03853a695200739365": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "HTMLModel", "state": {"layout": "IPY_MODEL_4b88d62ca6c24eb58381a564a77b8832", "style": "IPY_MODEL_f330b37e61fc4f3084ac4627e8a46769", "value": " 1023/? [02:19&lt;00:00,  8.04it/s]"}}, "3c4c2e9061044d57a4fd00c142d72808": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "HBoxModel", "state": {"children": ["IPY_MODEL_793a0122165848b182004308fcf4e88c", "IPY_MODEL_0ae56284fbe84ec5907213362784d3d0", "IPY_MODEL_0d0af4a01c6b4a03853a695200739365"], "layout": "IPY_MODEL_671095df68c64b22af74f94ebcc96241"}}, "4b88d62ca6c24eb58381a564a77b8832": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {}}, "671095df68c64b22af74f94ebcc96241": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {}}, "73c278c2e03b4baca60c8235904c1963": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {}}, "793a0122165848b182004308fcf4e88c": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "HTMLModel", "state": {"layout": "IPY_MODEL_b6480c41a395477abeef730cbe907680", "style": "IPY_MODEL_aed38bb3142f43e3940712669cd59771"}}, "aed38bb3142f43e3940712669cd59771": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "DescriptionStyleModel", "state": {"description_width": ""}}, "b6480c41a395477abeef730cbe907680": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {}}, "cfcf576daa3a4d2f85547a0f96b8a146": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "ProgressStyleModel", "state": {"description_width": ""}}, "ee746aa4aa4d4725a9f1081a760b463c": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "VBoxModel", "state": {"layout": "IPY_MODEL_73c278c2e03b4baca60c8235904c1963"}}, "f330b37e61fc4f3084ac4627e8a46769": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "DescriptionStyleModel", "state": {"description_width": ""}}, "fbac0935d0884d1789226708598aa44b": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"width": "20px"}}}, "version_major": 2, "version_minor": 0}</script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script crossorigin="anonymous" data-jupyter-widgets-cdn="https://cdn.jsdelivr.net/npm/" src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '4_application_on_climate_projections';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Tutorial 3: Evaluating the trained model on the test data" href="3_application_on_testing_data.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="0_getting_started.html">
+  
+  
+  
+  
+  
+    <p class="title logo__title">Use Case Template</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference external" href="https://geo-smart.github.io/index.html">Geosmart Website</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://foundations.projectpythia.org/landing-page.html">Project Pythia Foundations</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Chapter One</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="1_background_and_data.html">Tutorial 1: Background and data preparation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Chapter Two</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="2_model_training.html">Tutorial 2: Implementing the model and training pipeline</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Chapter Three</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="3_application_on_testing_data.html">Tutorial 3: Evaluating the trained model on the test data</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Chapter Four</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Tutorial 4: Running the model on downscaled climate projections</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://mybinder.org/v2/gh/geo-smart/use_case_template/main?urlpath=lab/tree/book/4_application_on_climate_projections.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onBinder"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="btn__text-container">Binder</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/geo-smart/use_case_template" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/geo-smart/use_case_template/edit/main/book/4_application_on_climate_projections.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/geo-smart/use_case_template/issues/new?title=Issue%20on%20page%20%2F4_application_on_climate_projections.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/4_application_on_climate_projections.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Tutorial 4: Running the model on downscaled climate projections</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outline">Outline:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-and-configuration">Setup and configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#getting-the-model-imported-and-loaded-up">Getting the model imported and loaded up</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-preparation">Data preparation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analyzing-the-projections">Analyzing the projections</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusions">Conclusions</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="tutorial-4-running-the-model-on-downscaled-climate-projections">
+<h1>Tutorial 4: Running the model on downscaled climate projections<a class="headerlink" href="#tutorial-4-running-the-model-on-downscaled-climate-projections" title="Permalink to this heading">#</a></h1>
+<section id="outline">
+<h2>Outline:<a class="headerlink" href="#outline" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Imports, including library code from previous steps</p></li>
+<li><p>Loading the trained model</p></li>
+<li><p>Opening and browsing the downscaled CMIP6 data</p></li>
+<li><p>Running the projections through the model</p></li>
+<li><p>Analysis</p></li>
+</ul>
+</section>
+<section id="setup-and-configuration">
+<h2>Setup and configuration<a class="headerlink" href="#setup-and-configuration" title="Permalink to this heading">#</a></h2>
+<p>At this point you should be familiar with the setup routine, importing packages and setting devices and datatypes.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">intake</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">from</span> <span class="nn">tqdm.autonotebook</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">PowerNorm</span>
+
+<span class="kn">from</span> <span class="nn">src.datapipes</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">get_static_data</span><span class="p">,</span> 
+    <span class="n">select_region</span><span class="p">,</span> 
+    <span class="n">make_data_pipeline</span><span class="p">,</span> 
+    <span class="n">scale_means</span><span class="p">,</span> 
+    <span class="n">scale_stds</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">src.utils</span> <span class="kn">import</span> <span class="n">load_experiment</span>
+<span class="kn">from</span> <span class="nn">src.models</span> <span class="kn">import</span> <span class="n">create_lstm_model</span>
+<span class="kn">from</span> <span class="nn">src.inference</span> <span class="kn">import</span> <span class="n">run_model</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="n">DEVICE</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda:0&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+<span class="n">DTYPE</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float16</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_25387/3060137355.py:9: TqdmExperimentalWarning: Using `tqdm.autonotebook.tqdm` in notebook mode. Use `tqdm.tqdm` instead to force console mode (e.g. in jupyter console)
+  from tqdm.autonotebook import tqdm
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="getting-the-model-imported-and-loaded-up">
+<h2>Getting the model imported and loaded up<a class="headerlink" href="#getting-the-model-imported-and-loaded-up" title="Permalink to this heading">#</a></h2>
+<p>Just as we did in the previous portion of the tutorial, we will use the experiment file to load in our hyperparameters and settings. From there we can use the <code class="docutils literal notranslate"><span class="pre">create_lstm_model</span></code> to construct the structure. Next we load the weights, and set the device and data type appropriately. Finally, we set the model to evaluation mode.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">config_file</span> <span class="o">=</span> <span class="s1">&#39;../experiments/tutorial/tutorial.yml&#39;</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">load_experiment</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">create_lstm_model</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;model_config&#39;</span><span class="p">])</span>
+<span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;weights_file&#39;</span><span class="p">],</span> <span class="n">map_location</span><span class="o">=</span><span class="n">DEVICE</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DTYPE</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sequential(
+  (0): LSTM(5, 128, batch_first=True)
+  (1): LSTMOutput()
+  (2): Linear(in_features=128, out_features=1, bias=True)
+  (3): LeakyReLU(negative_slope=0.01)
+)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="data-preparation">
+<h2>Data preparation<a class="headerlink" href="#data-preparation" title="Permalink to this heading">#</a></h2>
+<p>Unfortunately, we still also have a bit of work to do to make the climate projections usable with our model. Now that we’re running in forward mode on completely new data it’s worth seeing what everything looks like. As you can see after opening up the catalog, the data has a similar overall structure as the ERA5 data, but with some additional keys. These correspond to the different emission pathways (experiments), global climate models, and downscaling methods that were used to produce CarbonPlan’s downscaled CMIP6 ensemble. For more details see the <a class="reference external" href="https://carbonplan.org/research/cmip6-downscaling?t=2015-1-1&amp;f=7b2273223a227373703234352c7373703337302c737370353835222c2276223a227461736d6178222c2274223a2279656172227d&amp;active=ScenarioMIP.CCCma.CanESM5.ssp245.r1i1p1f1.day.GARD-SV.tasmax.year">CarbonPlan Data Explorer</a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cat</span> <span class="o">=</span> <span class="n">intake</span><span class="o">.</span><span class="n">open_esm_datastore</span><span class="p">(</span>
+  <span class="s1">&#39;https://cpdataeuwest.blob.core.windows.net/cp-cmip/version1/catalogs/global-downscaled-cmip6.json&#39;</span>
+<span class="p">)</span>
+<span class="n">cat</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><p><strong>global-downscaled-cmip6 catalog with 129 dataset(s) from 339 asset(s)</strong>:</p> <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>unique</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>activity_id</th>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>institution_id</th>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>source_id</th>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>experiment_id</th>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>member_id</th>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>timescale</th>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>variable_id</th>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>method</th>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>downscaled_daily_data_uri</th>
+      <td>339</td>
+    </tr>
+    <tr>
+      <th>version</th>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>derived_variable_id</th>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>We can just grab a single ensemble member using some arbitrary choices for the downscaling method (<code class="docutils literal notranslate"><span class="pre">method</span></code>), CanESM5 as the GCM (<code class="docutils literal notranslate"><span class="pre">source_id</span></code>), and SSP 245 scenario (<code class="docutils literal notranslate"><span class="pre">experiment_id</span></code>). As before, we want data with the daily minimum temperature, daily maximum temperature, and precipitation at a daily timescale. To see the available options you can either use the CarbonPlan Data Explorer, or use the catalog to find options for each of the settings like we did in the first part of tutorial with the ERA5 catalog.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cat_subset</span> <span class="o">=</span> <span class="n">cat</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;GARD-SV&quot;</span><span class="p">,</span>
+    <span class="n">source_id</span><span class="o">=</span><span class="s2">&quot;CanESM5&quot;</span><span class="p">,</span>
+    <span class="n">experiment_id</span><span class="o">=</span><span class="s2">&quot;ssp245&quot;</span><span class="p">,</span>
+    <span class="n">variable_id</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;tasmin&#39;</span><span class="p">,</span> <span class="s1">&#39;tasmax&#39;</span><span class="p">,</span> <span class="s1">&#39;pr&#39;</span><span class="p">],</span>
+    <span class="n">timescale</span><span class="o">=</span><span class="s1">&#39;day&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">dsets</span> <span class="o">=</span> <span class="n">cat_subset</span><span class="o">.</span><span class="n">to_dataset_dict</span><span class="p">()</span>
+<span class="n">met_ds</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dsets</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>--&gt; The keys in the returned dictionary of datasets are constructed as follows:
+	&#39;activity_id.institution_id.source_id.experiment_id.timescale.method&#39;
+</pre></div>
+</div>
+<div class="output text_html">
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    progress:not([value]), progress:not([value])::-webkit-progress-bar {
+        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+</div><div class="output text_html">
+    <div>
+      <progress value='1' class='' max='1' style='width:300px; height:20px; vertical-align: middle;'></progress>
+      100.00% [1/1 00:00&lt;00:00]
+    </div>
+    </div></div>
+</div>
+<p>Next we can open up the static data, which contains the elevation, slopes, aspects, and mask variables. These are actually on a slightly different grid than the CMIP6 data - basically the static data just has longitudes that go from 0 to 360, and the CMIP6 data has longitudes from -180 to 180. Otherwise the grids are identical, which makes it easy to line them back up. To do that we just roll the longitude dimension by half of the total number of gridcells. We will assign the correct coordinates simply using the <code class="docutils literal notranslate"><span class="pre">assign_coords</span></code> method and set the new longitudes using CMIP6 data we just opened up. And then finally we can merge it all into a single <code class="docutils literal notranslate"><span class="pre">ds</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">static_data</span> <span class="o">=</span> <span class="n">get_static_data</span><span class="p">()</span>
+<span class="n">static_data</span> <span class="o">=</span> <span class="n">static_data</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">lon</span><span class="o">=</span><span class="mi">720</span><span class="p">)</span>
+<span class="n">static_data</span> <span class="o">=</span> <span class="n">static_data</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">({</span><span class="s1">&#39;lon&#39;</span><span class="p">:</span> <span class="n">met_ds</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]})</span>
+<span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span><span class="n">met_ds</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span> <span class="n">static_data</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>You may note that the given <code class="docutils literal notranslate"><span class="pre">ds</span></code> here is still the global data, so now we use the <code class="docutils literal notranslate"><span class="pre">select_region</span></code> method to clip out just the region(s) that we specified in the configuration. Next, is another preprocessing step for making the CMIP6 data match the ERA5 training data by scaling the precipitation from mm/day to mm/second. This is a simple division by the number of seconds in a day, 86400. Then, we copy out the mask just like we did in the previous section of the tutorial and set the mask in the test data to be all ones so we can run the forward mode on the full domain all at once. We also add the cubed root of precipitation to the dataset so that we match the training data. And finally, as little bit of a workaround to the data pipeline, we set the output variables to just be <code class="docutils literal notranslate"><span class="pre">cbrt_pr</span></code>, since we don’t actually have the <code class="docutils literal notranslate"><span class="pre">swe</span></code> as a variable (if we did, then we wouldn’t need this project after all!). This just ends up being a “dummy” output that we will not actually use.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_data</span> <span class="o">=</span> <span class="n">select_region</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;data_config&#39;</span><span class="p">][</span><span class="s1">&#39;regions&#39;</span><span class="p">])</span>
+<span class="c1"># Need to convert from mm/day to mm/s to match ERA5</span>
+<span class="n">test_data</span><span class="p">[</span><span class="s1">&#39;pr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">test_data</span><span class="p">[</span><span class="s1">&#39;pr&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">86400</span>
+<span class="n">test_data</span><span class="p">[</span><span class="s1">&#39;cbrt_pr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">test_data</span><span class="p">[</span><span class="s1">&#39;pr&#39;</span><span class="p">],</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">config</span><span class="p">[</span><span class="s1">&#39;data_config&#39;</span><span class="p">][</span><span class="s1">&#39;output_vars&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;cbrt_pr&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Next up, we just have to perform the same tricks we used during inference last time by recording the actual shape of the data and then telling the config that we’re running the whole domain per batch by setting the <code class="docutils literal notranslate"><span class="pre">batch_dims</span></code>. Last, but not least, we set the <code class="docutils literal notranslate"><span class="pre">output_var</span></code> to be <code class="docutils literal notranslate"><span class="pre">pr</span></code> since we don’t actually have <code class="docutils literal notranslate"><span class="pre">swe</span></code> in the CMIP data and have to have something there. With that all set we can make the data pipeline and get to running the model!</p>
+<p>To make our analysis tractable we’ll then subset it down to three time periods:</p>
+<ul class="simple">
+<li><p>2015-2035: We will call this “2020s”</p></li>
+<li><p>2040-2060: We will call this “2050s”</p></li>
+<li><p>2070-2090: We will call this “2080s”</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">swe_pred</span> <span class="o">=</span> <span class="n">run_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">test_data</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">DEVICE</span><span class="p">,</span> <span class="n">DTYPE</span><span class="p">)</span>
+<span class="n">swe_2020s</span> <span class="o">=</span> <span class="n">swe_pred</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="s1">&#39;2015&#39;</span><span class="p">,</span> <span class="s1">&#39;2035&#39;</span><span class="p">))</span>
+<span class="n">swe_2050s</span> <span class="o">=</span> <span class="n">swe_pred</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="s1">&#39;2040&#39;</span><span class="p">,</span> <span class="s1">&#39;2060&#39;</span><span class="p">))</span>
+<span class="n">swe_2080s</span> <span class="o">=</span> <span class="n">swe_pred</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="s1">&#39;2070&#39;</span><span class="p">,</span> <span class="s1">&#39;2090&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "3c4c2e9061044d57a4fd00c142d72808", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<section id="analyzing-the-projections">
+<h3>Analyzing the projections<a class="headerlink" href="#analyzing-the-projections" title="Permalink to this heading">#</a></h3>
+<p>To actually analyze the data, which has been re-converted into an <code class="docutils literal notranslate"><span class="pre">xarray.DataArray</span></code> we will add on some additional pieces. First, we want to be able to compute averages over the water year, so that our snow timeseries aren’t chopped in half at the December-January divide. To do that, we compute a new variable, which we name <code class="docutils literal notranslate"><span class="pre">dowy</span></code> for day of water year, which runs from 0 to 365 starting on October 1st. Given this, we can use the <code class="docutils literal notranslate"><span class="pre">dowy</span></code> variable to compute <code class="docutils literal notranslate"><span class="pre">groupby</span></code>s.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">day_of_wateryear</span><span class="p">(</span><span class="n">ds</span><span class="p">):</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">dayofyear</span> <span class="o">+</span> <span class="mi">92</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">365</span> <span class="o">+</span> <span class="n">ds</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">is_leap_year</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;dowy&#39;</span>
+    <span class="k">return</span> <span class="n">result</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The actual calcuulations we want to run is to look at different quantiles for each day of the water year. We can simply use the <code class="docutils literal notranslate"><span class="pre">groupby</span></code> and <code class="docutils literal notranslate"><span class="pre">quantile</span></code> functions provided by xarray for this. Then, we will use the <code class="docutils literal notranslate"><span class="pre">plot_quantile_spread</span></code> function, which takes the data, a set of quantiles, and a matplotlib <code class="docutils literal notranslate"><span class="pre">Axis</span></code> and shades between different levels. For simplicity, we’ll use the 10th, 25th, 50th (aka median), 75th, and 90th percentiles to draw our figures.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_quantile_spread</span><span class="p">(</span><span class="n">da</span><span class="p">,</span> <span class="n">quantiles</span><span class="p">,</span> <span class="n">ax</span><span class="p">):</span>
+    <span class="n">da_wy</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">day_of_wateryear</span><span class="p">(</span><span class="n">da</span><span class="p">))</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">quantiles</span><span class="p">)</span>
+    <span class="n">dowy</span> <span class="o">=</span> <span class="n">da_wy</span><span class="o">.</span><span class="n">dowy</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+        <span class="n">dowy</span><span class="p">,</span> <span class="n">da_wy</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">quantile</span><span class="o">=</span><span class="n">quantiles</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">da_wy</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">quantile</span><span class="o">=</span><span class="n">quantiles</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>  
+        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+        <span class="n">dowy</span><span class="p">,</span> <span class="n">da_wy</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">quantile</span><span class="o">=</span><span class="n">quantiles</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">da_wy</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">quantile</span><span class="o">=</span><span class="n">quantiles</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]),</span>  
+        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dowy</span><span class="p">,</span> <span class="n">da_wy</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">quantile</span><span class="o">=</span><span class="n">quantiles</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We will analyze the same three locations in the Southern Rockies, Northern Cascades, and Central Sierra Nevadas, but this time use the quantiles for the three time periods. First up is the Southern Rockies. We definitely see trends downwards in the peak SWE values, and a spread that increases in the future. The decrease between the 2020s and 2050s is much more noticeable than changes between the 2050s and 2080s, most likely due to the fact that we chose SSP245 which levels out in CO2 concentrations starting around 2050.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">loc</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;lat&#39;</span><span class="p">:</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">38</span><span class="p">,</span> <span class="mi">40</span><span class="p">,),</span> <span class="s1">&#39;lon&#39;</span><span class="p">:</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">252</span><span class="o">-</span><span class="mi">360</span><span class="p">,</span> <span class="mi">254</span><span class="o">-</span><span class="mi">360</span><span class="p">)}</span>
+<span class="n">swe_loc_20</span> <span class="o">=</span> <span class="n">swe_2020s</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="o">**</span><span class="n">loc</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">])</span>
+<span class="n">swe_loc_50</span> <span class="o">=</span> <span class="n">swe_2050s</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="o">**</span><span class="n">loc</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">])</span>
+<span class="n">swe_loc_80</span> <span class="o">=</span> <span class="n">swe_2080s</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="o">**</span><span class="n">loc</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">])</span>
+
+<span class="n">quantiles</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">]</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plot_quantile_spread</span><span class="p">(</span><span class="n">swe_loc_20</span><span class="p">,</span> <span class="n">quantiles</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;2020s&#39;</span><span class="p">)</span>
+<span class="n">plot_quantile_spread</span><span class="p">(</span><span class="n">swe_loc_50</span><span class="p">,</span> <span class="n">quantiles</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;2050s&#39;</span><span class="p">)</span>
+<span class="n">plot_quantile_spread</span><span class="p">(</span><span class="n">swe_loc_80</span><span class="p">,</span> <span class="n">quantiles</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;2080s&#39;</span><span class="p">)</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;SWE [m]&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Day of Wateryear&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;Southern Rockies&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/3cfc4aef9a0515b6f42304427f1006c1036f63f1b4321600d9adfe5470545985.png" src="_images/3cfc4aef9a0515b6f42304427f1006c1036f63f1b4321600d9adfe5470545985.png" />
+</div>
+</div>
+<p>In the Northern Cascades, however, we see a much more dramatic decrease even into the 2080s. We also see that the 10th and 90th percentile range has shrunk down, suggesting smaller, but not as variable snowpacks.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">loc</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;lat&#39;</span><span class="p">:</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">47</span><span class="p">,</span> <span class="mi">49</span><span class="p">),</span> <span class="s1">&#39;lon&#39;</span><span class="p">:</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">238</span><span class="o">-</span><span class="mi">360</span><span class="p">,</span> <span class="mi">240</span><span class="o">-</span><span class="mi">360</span><span class="p">),</span> <span class="p">}</span>
+<span class="n">swe_loc_20</span> <span class="o">=</span> <span class="n">swe_2020s</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="o">**</span><span class="n">loc</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">])</span>
+<span class="n">swe_loc_50</span> <span class="o">=</span> <span class="n">swe_2050s</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="o">**</span><span class="n">loc</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">])</span>
+<span class="n">swe_loc_80</span> <span class="o">=</span> <span class="n">swe_2080s</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="o">**</span><span class="n">loc</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">])</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plot_quantile_spread</span><span class="p">(</span><span class="n">swe_loc_20</span><span class="p">,</span> <span class="n">quantiles</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;2020s&#39;</span><span class="p">)</span>
+<span class="n">plot_quantile_spread</span><span class="p">(</span><span class="n">swe_loc_50</span><span class="p">,</span> <span class="n">quantiles</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;2050s&#39;</span><span class="p">)</span>
+<span class="n">plot_quantile_spread</span><span class="p">(</span><span class="n">swe_loc_80</span><span class="p">,</span> <span class="n">quantiles</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;2080s&#39;</span><span class="p">)</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;SWE [m]&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Day of Wateryear&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;Northern Cascades&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/b82e500edc113d0dd24c5fb22e977d0491c435e446bafbe53a94bc87338e09cb.png" src="_images/b82e500edc113d0dd24c5fb22e977d0491c435e446bafbe53a94bc87338e09cb.png" />
+</div>
+</div>
+<p>Finally, the Central Sierra Nevada results show similar trends, but even lower absolute snowpack results. As a reminder, these results should be taken with a grain of salt because they are only a single location, with a single set of GCM, SSP, and downscaling method. To truly assess the future of snow with certainty we will need to look at more combinations.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">loc</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;lat&#39;</span><span class="p">:</span> <span class="nb">slice</span><span class="p">(</span><span class="mf">37.5</span><span class="p">,</span> <span class="mf">38.5</span><span class="p">),</span> <span class="s1">&#39;lon&#39;</span><span class="p">:</span> <span class="nb">slice</span><span class="p">(</span><span class="mf">239.75</span><span class="o">-</span><span class="mi">360</span><span class="p">,</span> <span class="mf">240.25</span><span class="o">-</span><span class="mi">360</span><span class="p">),</span> <span class="p">}</span>
+<span class="n">swe_loc_20</span> <span class="o">=</span> <span class="n">swe_2020s</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="o">**</span><span class="n">loc</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">])</span>
+<span class="n">swe_loc_50</span> <span class="o">=</span> <span class="n">swe_2050s</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="o">**</span><span class="n">loc</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">])</span>
+<span class="n">swe_loc_80</span> <span class="o">=</span> <span class="n">swe_2080s</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="o">**</span><span class="n">loc</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">])</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plot_quantile_spread</span><span class="p">(</span><span class="n">swe_loc_20</span><span class="p">,</span> <span class="n">quantiles</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;2020s&#39;</span><span class="p">)</span>
+<span class="n">plot_quantile_spread</span><span class="p">(</span><span class="n">swe_loc_50</span><span class="p">,</span> <span class="n">quantiles</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;2050s&#39;</span><span class="p">)</span>
+<span class="n">plot_quantile_spread</span><span class="p">(</span><span class="n">swe_loc_80</span><span class="p">,</span> <span class="n">quantiles</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;2080s&#39;</span><span class="p">)</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;SWE [m]&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Day of Wateryear&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;Central Sierra Nevada&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/6a9deb79811d5c25882eb64dcec0c6767b1cf6c36128f5ac7a3624dfc9a636d6.png" src="_images/6a9deb79811d5c25882eb64dcec0c6767b1cf6c36128f5ac7a3624dfc9a636d6.png" />
+</div>
+</div>
+<p>Now that we’ve seen some temporal results, we can also look at the average snowpack spatially for each of the time periods. Because snow is very seasonally dependent we will look at this only for the winter and spring seasons.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">swe_seas_mean_2020s</span> <span class="o">=</span> <span class="n">swe_2020s</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">swe_2020s</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">season</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">swe_seas_mean_2050s</span> <span class="o">=</span> <span class="n">swe_2050s</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">swe_2050s</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">season</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">swe_seas_mean_2080s</span> <span class="o">=</span> <span class="n">swe_2080s</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">swe_2080s</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">season</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>First we will plot the winter averages, which will show where snow generally is at a maximum in lower-lying areas. Generally, what we see is a reduction in this earlier season snowpack in the lower lying mountains such as the Southern Cascades, and the Basin and Range. We also see a contraction in the area of high-SWE concentration in the larger mountain ranges. Overall, decreases continue more dramatically in the lower lying areas than in the higher areas even into the 2080s.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">norm</span> <span class="o">=</span> <span class="n">PowerNorm</span><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">swe_seas_mean_2020s</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">season</span><span class="o">=</span><span class="s1">&#39;DJF&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;turbo&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">swe_seas_mean_2050s</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">season</span><span class="o">=</span><span class="s1">&#39;DJF&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;turbo&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">swe_seas_mean_2080s</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">season</span><span class="o">=</span><span class="s1">&#39;DJF&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;turbo&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;2020s&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;2050s&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;2080s&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;Winter mean SWE [m]&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 0.98, &#39;Winter mean SWE [m]&#39;)
+</pre></div>
+</div>
+<img alt="_images/2b4e12f5e0301a9767708006ab63f8cbdcb5537c7e6315295870d1a58fcf151d.png" src="_images/2b4e12f5e0301a9767708006ab63f8cbdcb5537c7e6315295870d1a58fcf151d.png" />
+</div>
+</div>
+<p>On the other hand, the spring snowpack is generally considered the peak of the season for snow-dominated regions. This time period often is used to estimate the overall carry-over storage that is expected to melt during the generally dry summer-months. Here we can see that there is quite a bit of shrinkage in the snowpack in the Rocky Mountains in Montana and Idaho. There is less dramatic of a decrease in the southern portions of the Rockies in Colorado and New Mexico however. Here we also see a large contraction in the snowpack in the Sierra Nevada and Cascade ranges.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">swe_seas_mean_2020s</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">season</span><span class="o">=</span><span class="s1">&#39;MAM&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;turbo&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">swe_seas_mean_2050s</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">season</span><span class="o">=</span><span class="s1">&#39;MAM&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;turbo&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">swe_seas_mean_2080s</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">season</span><span class="o">=</span><span class="s1">&#39;MAM&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;turbo&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;2020s&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;2050s&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;2080s&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;Spring mean SWE [m]&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 0.98, &#39;Spring mean SWE [m]&#39;)
+</pre></div>
+</div>
+<img alt="_images/885d89e33f153f3b200807363aa4b7ec12b14ad0927f0057c906cf2198b4e53f.png" src="_images/885d89e33f153f3b200807363aa4b7ec12b14ad0927f0057c906cf2198b4e53f.png" />
+</div>
+</div>
+</section>
+<section id="conclusions">
+<h3>Conclusions<a class="headerlink" href="#conclusions" title="Permalink to this heading">#</a></h3>
+<p>This is the end of the tutorial, congratulations for making it through. We hope that you have learned some tools and techniques for applying machine learning techniques to large spatiotemporal datasets. We also hope that you can take these techniques and apply them to your data, or expand the scope of our own work here to answer new scientific questions! As mentioned before, this being a tutorial limited the scope and robustness of our results so they should be taken with caution before drawing concrete conclusions. However, you now have the tools to be able to run more robust experiments on this data, so there are some follow ups that you might try:</p>
+<ol class="arabic simple">
+<li><p>Run the same analysis for a different region. Note region sizes may change and affect the ability to run on free services such as Microsoft Planetary Computer or Google Colab.</p></li>
+<li><p>Train the model for longer or do some hyperparameter tuning. Although our base model worked quite well, there most certainly is still performance to be gained by throwing more resources at the problem.</p></li>
+<li><p>Apply the model to more scenarios to get a sense of uncertainties, or even apply the trained model to a region it wasn’t trained on.</p></li>
+</ol>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+                <footer class="bd-footer-article">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="3_application_on_testing_data.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Tutorial 3: Evaluating the trained model on the test data</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outline">Outline:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-and-configuration">Setup and configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#getting-the-model-imported-and-loaded-up">Getting the model imported and loaded up</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-preparation">Data preparation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analyzing-the-projections">Analyzing the projections</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusions">Conclusions</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            <div class="bd-footer-content__inner">
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By eScience Institute, University of Washington
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div></div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
