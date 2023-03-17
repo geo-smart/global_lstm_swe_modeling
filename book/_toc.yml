@@ -1,6 +1,6 @@
 # Table of contents
 # Learn more at https://jupyterbook.org/customize/toc.html
-root: intro
+root: 0_getting_started
 format: jb-book
 parts:
 - caption: About
@@ -11,10 +11,6 @@ parts:
       url: https://foundations.projectpythia.org/landing-page.html
     - title: About Use Case Library
       file: chapters/about
-
-- caption: Primer
-  chapters:
-    - file: 0_getting_started
 
 - caption: Chapter One
   chapters:
